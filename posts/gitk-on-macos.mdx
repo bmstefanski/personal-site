@@ -1,0 +1,18 @@
+---
+title: 🎒 Bringing Back Gitk on macOS
+description: Discover how to reinstall the Gitk GUI tool on newer versions of macOS for a more enjoyable Git tree browsing experience.
+date: '2023-03-28'
+tags: Unix
+---
+
+In today's blog post, let's talk about Git GUIs! As someone who has always stuck to the command line and git aliases for Git adventures, it may be surprising to find out there's an instance where even I can't resist the charm of a good ol' GUI! And that's when casually browsing the Git tree to check out the changes made and where they've been sprinkled.
+
+In the past, the built-in Git tool called gitk was used for this purpose. But it seems like in the latest versions of macOS, it's not included by default, so a little extra effort is needed to get it back.
+
+To bring `gitk` back into action, just run the following commands:
+
+<Code code={`brew update   
+brew install git   
+brew install git-gui`} language="bash" />
+
+And voilà! The `gitk` command should be up and running, ready to help navigate that Git tree with ease.
