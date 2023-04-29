@@ -4,7 +4,7 @@ import { ImageResponse } from '@vercel/og'
 import React from 'react'
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 }
 
 const rubikRegularFontP = fetch(new URL('../../public/fonts/Rubik-Regular.ttf', import.meta.url)).then((res) => res.arrayBuffer())
@@ -15,63 +15,24 @@ export default async function handler(req) {
   try {
     const [rubikRegularFont, rubikBoldFont] = await Promise.all([rubikRegularFontP, rubikBoldFontP])
 
+    const { searchParams } = new URL(req.url)
+
     return new ImageResponse(
       (
         <div
+          tw="w-full h-full flex"
           style={{
-            display: 'flex',
-            height: '100%',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            letterSpacing: '-.02em',
-            fontWeight: 700,
-            background: '#0F141B',
+            background: `linear-gradient(60deg,#f79533,#f37055,#E60067,#a166ab,#5073b8,#1098ad,#07b39b,#6fba82)`,
           }}
         >
-          <div
-            style={{
-              left: 42,
-              top: 42,
-              position: 'absolute',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <span
-              style={{
-                width: 24,
-                height: 24,
-                background: '#E50066',
-              }}
-            />
-            <span
-              style={{
-                marginLeft: 8,
-                fontSize: 20,
-                color: 'white',
-              }}
-            >
-              bstefanski.com
-            </span>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              padding: '20px 50px',
-              margin: '0 42px',
-              fontSize: 40,
-              width: 'auto',
-              maxWidth: 550,
-              textAlign: 'center',
-              backgroundColor: '#E50066',
-              color: 'white',
-              lineHeight: 1.4,
-            }}
-          >
-            Making the Web. Faster.
+          <div tw="relative h-[95%] w-[97%] m-auto flex items-center justify-center p-20" style={{ background: '#0E141B' }}>
+            <div tw="flex h-full items-center w-full">
+              <div tw="flex-1 flex flex-col">
+                <h1 tw="text-[120px] text-center m-auto leading-none text-white drop-shadow-2xl">Bart Stefanski</h1>
+
+                <p tw="text-[70px] m-auto mt-14">🐶 🥊 🍿 ❤️</p>
+              </div>
+            </div>
           </div>
         </div>
       ),
