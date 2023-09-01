@@ -1,0 +1,13 @@
+---
+title: 🛡️ Prevent Chrome from redirecting your HTTP localhost to HTTPS
+summary: How to prevent chroem from redirecting your local service from http to https
+date: '2023-02-21'
+tags: ['Developer Experience']
+draft: false
+---
+
+Every time I tried setting up custom `/etc/hosts` for local development, chrome kept redirecting my service from HTTP to HTTPS.
+Probably because there was already an existing website with the same hostname and SSL that I previously visited.
+To fix that you need to go to `chrome://net-internals/#hsts` and put your service's URL in the input located under the **Delete domain security policies** section. Click delete and voilà!
+
+![Google chrome net internals page](/static/images/prevent-chrome-from-redirecting-your-http-localhost-to-https/dns-purge.png)

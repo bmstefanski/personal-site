@@ -1,0 +1,148 @@
+---
+title: 🌑 Creating accessible and non-flickering dark mode with Next.js
+summary: A tutorial on how to create accessible and non-flickering dark mode with Next.js for both SSR and SSG.
+date: '2021-09-11'
+tags: ['Next.js', 'A11y']
+draft: false
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" />
+
+## Common pitfalls
+
+Creating a dark mode for a web application seems to be an easy task, and it is! But still, there are some pitfalls that you can run into. Here are the most common ones:
+
+- ♿️ **Accessibility issues**, namely no support for the prefers-color-scheme feature. What it does is basically make the website the same color as your system. It's extremely useful, especially when combined with automatic dark mode (light appearance during the day and dark appearance at night). It's always a good idea to respect that feature, you don't want to lose a user over that!
+  <br />
+- 📸 **Flickering** - imagine refreshing or entering the page at night and your whole screen turns into an extremely strong floodlight. It's not fun.
+
+![Blinded by light mode meme](/static/images/creating-accessible-non-flickering-dark-mode-nextjs/blinded-by-light-mode.png)
+
+## Solutions
+
+There are a few solutions to the flickering problem, and it all depends on how you render your app.
+
+If you're using server-side rendering (SSR), the only thing you need to do is store the selected color mode in a cookie, and based on that - render the appropriate variant of a page on the server. And yeah, in some cases, you'll also need to invalidate cache 🤟
+
+If you're already using SSR then it seems perfect. But, the major downside is that the server cannot know about the client's preferred color mode (`prefers-color-scheme`). So it would require a user to change it manually, which might be or not be an issue for your users.
+
+For static applications, it is quite similar, but instead of storing and reading from cookies, we do this from storage (localStorage or sessionStorage). And we're deferring the render of the page on the client-side, not server-side.
+
+So the flow would look like this:
+
+- Page starts loading 🔄
+- Our blocking script executes and:
+  - Checks if there's already stored color mode in the storage. And if there's one, then it goes straight to the last step
+  - If there's no entry in the storage, it picks the same color mode as your OS is currently using
+  - Sets the appropriate class on the body element, for example `.light-theme`
+- Based on the applied class, your app sets the right values for variables and renders the page without a flick ⛔📸
+
+The above solution can be applied to both - client and server side rendering. They will _in theory_, lower the [FCP](https://web.dev/fcp/) score, but it is rather a negligible decrease.
+
+## Implementation
+
+Here's and example on how we could implement this using [my library](https://github.com/Blazity/nextjs-color-mode)
+
+### Installation
+
+```bash
+$ npm i --save nextjs-color-mode
+
+# or
+
+$ yarn add nextjs-color-mode
+```
+
+### Setup
+
+First, you need to import `ColorModeScript` from `nextjs-color-mode` and place it somewhere in the `_app.js` file.
+
+```tsx
+import Head from 'next/head'
+import { ColorModeScript } from 'nextjs-color-mode'
+
+const criticalThemeCss = \`
+.next-light-theme {
+--background: #fff;
+--text: #000;
+}
+
+.next-dark-theme {
+--background: #000;
+--text: #fff;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+}
+\`
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <Head>
+        <style dangerouslySetInnerHTML={{ __html: criticalThemeCss }} />
+      </Head>
+      <ColorModeScript />
+      <Component {...pageProps} />
+    </>
+  )
+}
+```
+
+**If you're using styled-components or emotion, you can put the contents of `criticalThemeCss` to GlobalStyles. Just make sure it's critical css, and at the top of your global styles.**
+
+### Theme switcher
+
+To implement theme switcher, you should use the `useColorSwitcher` hook
+
+```tsx
+import { ColorModeStyles, useColorModeValue, useColorSwitcher } from 'nextjs-color-mode'
+
+export default function ColorSwitcher(props) {
+  const { toggleTheme, colorMode } = useColorSwitcher()
+
+  return (
+    <button onClick={toggleTheme}>
+      Change theme to {colorMode === 'light' ? 'dark' : 'light'}
+    </button>
+  )
+}
+```
+
+**Note that every component that explicitly uses this hook should be rendered only on the client-side. To do so, you can use `next/dynamic` module or [check out how it's done in the example](https://github.com/Blazity/nextjs-color-mode/blob/master/example/pages/index.js#L5)**
+
+### Using dynamic variables
+
+Sometimes you may want to omit the design system or need to hotfix something fast. Here's the solution for that.
+
+```tsx
+export default function SomeComponent() {
+  const [boxBgColor, boxBgCss] = useColorModeValue('box-color', 'blue', 'red')
+  const [boxBorderColor, boxBorderCss] = useColorModeValue('box-border-color', 'red', 'blue')
+  // the first item of the array returns CSS variable name
+  // and the second one returns a special object that then gets parsed into a themable CSS variable
+
+  return (
+    <>
+      <ColorModeStyles styles={[boxBgCss, boxBorderCss]} />
+      <div
+        style={{
+          width: '24rem',
+          height: '12rem',
+          backgroundColor: boxBgColor,
+          border: '10px solid',
+          borderColor: boxBorderColor,
+        }}
+      />
+    </>
+  )
+}
+```
+
+**Do not use the same name twice, it may cause variable overriding and is hard to debug. Also using things like unique id, UUID or any randomly generated set of characters is a bad idea - it will display mismatch content warning and make it even harder to debug!**
+
+Checkout the [working example](https://nextjs-color-mode.vercel.app/) and [its repository](https://github.com/Blazity/nextjs-color-mode/tree/master/example).

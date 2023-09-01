@@ -1,0 +1,23 @@
+---
+title: 🌌 Fixing Kubernetes OpenLens Blank Screen Issue
+summary: Discover a simple fix for the blank screen issue in OpenLens when working with kubectl by using a quick refresh command to reveal the clusters view.
+date: '2023-03-22'
+tags: ['DevOps']
+draft: false
+---
+
+I recently attempted to set up OpenLens to work with `kubectl`, but all I encountered was a blank white screen. Despite having everything configured correctly and being able to list all the clusters, the connection seemed established. To verify if you have a similar connection, you can try running this command:
+
+```bash
+$ kubectl get pods
+```
+
+The expected output of this command should display a list of your available pods. If the connection is established correctly, you'll see something like:
+
+```bash
+NAME                          READY   STATUS    RESTARTS   AGE
+your-pod-name-1               1/1     Running   0          1d
+your-pod-name-2               1/1     Running   0          1d
+```
+
+I soon discovered that OpenLens is built using Electron and React, which led me to a simple solution. **By pressing `cmd + R` to refresh the view, I managed to fix the issue, and the clusters view appeared as expected**. This quick refresh can be a helpful trick if you ever find yourself facing the same problem when working with OpenLens and kubectl.

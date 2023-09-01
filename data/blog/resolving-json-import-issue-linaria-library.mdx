@@ -1,0 +1,63 @@
+---
+title: 🥴  Resolving a JSON Import Issue with Linaria
+summary: Discover how to fix a bug that occurs when importing JSON files in a component with the Linaria library, by making a simple adjustment to the configuration order.
+date: '2023-03-26'
+tags: ['React']
+draft: false
+---
+
+Recently, I faced a bug related to the Linaria library that prevented my page from building. I stumbled upon this issue when attempting to import JSON files in a component where Linaria was utilized. Instead of processing the JSON file correctly, Linaria treated it like a JavaScript file, leading to parsing errors. I attempted to exclude all JSON files in the Linaria configuration using a simple regex, but it didn't seem to work properly.
+
+Here's a screenshot of the exact error I encountered: (screenshot here).
+
+Before fixing the issue, my configuration looked like this:
+
+![Linaria bug](/static/images/resolving-json-import-issue-linaria-library/screenshot.png)
+
+```typescript
+const shaker = require('@linaria/shaker').default
+
+module.exports = {
+  rules: [
+    {
+      test: /\.json/,
+      action: 'ignore',
+    },
+    {
+      test: /node_modules/,
+      action: 'ignore',
+    },
+    {
+      action: shaker,
+    },
+  ],
+}
+```
+
+As you can see, I'm ignoring all the .json files and node_modules. Additionally, I have the shaker plugin added as the last rule.
+
+After some debugging and setting breakpoints in the code, I discovered that the issue was being caused by the shaker plugin. Under the hood, the rules are applied in reverse order, and the order matters. Since I set the shaker as the last rule, it ran as the first one. As a result, it didn't respect the other rules and failed to ignore the files I intended to exclude, causing the issue.
+
+To fix this problem, I simply needed to place the shaker action as the first rule:
+
+```typescript
+const shaker = require('@linaria/shaker').default
+
+module.exports = {
+  rules: [
+    {
+      action: shaker,
+    },
+    {
+      test: /\.json/,
+      action: 'ignore',
+    },
+    {
+      test: /node_modules/,
+      action: 'ignore',
+    },
+  ],
+}
+```
+
+By placing the shaker action as the first rule, I was able to resolve the issue and successfully exclude the JSON files and node_modules from processing.

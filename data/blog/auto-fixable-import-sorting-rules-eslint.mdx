@@ -1,0 +1,69 @@
+---
+title: ✨ Auto-fixable import sorting rules for ESLint
+summary: ESLint config snippet for sorting imports automatically on file save. Works well with Next.js
+date: '2021-11-26'
+tags: ['Clean Code']
+draft: false
+---
+
+The pretty much standard way of sorting imports in JavaScript:
+
+- 3rd party imports first
+- then local default exports
+- and then local exports
+
+And here's the snippet that sorts them in this exact order and satisfies my needs completely!
+
+```bash
+$ npm i --save-dev eslint-plugin-import
+
+# or
+
+$ yarn add -D eslint-plugin-import
+```
+
+```tsx
+// .eslintrc.js
+const fs = require('fs')
+
+const ignoredSortingDirectories = ['.git', '.next', '.vscode', 'node_modules']
+
+module.exports = {
+  /// ... some other configurations
+  rules: {
+    // ... your rules
+    'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: true }],
+    'import/order': [
+      1,
+      {
+        groups: ['external', 'builtin', 'internal', 'sibling', 'parent', 'index'],
+        pathGroups: [
+          ...getDirectoriesToSort().map((singleDir) => ({
+            pattern: `${singleDir}/**`,
+            group: 'internal',
+          })),
+          { pattern: 'env', group: 'internal' },
+          { pattern: 'theme', group: 'internal' },
+          { pattern: 'public/**', group: 'internal', position: 'after' },
+        ],
+        pathGroupsExcludedImportTypes: ['internal'],
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    // ... your rules
+  },
+}
+
+function getDirectoriesToSort() {
+  return getDirectories(process.cwd()).filter((f) => !ignoredSortingDirectories.includes(f))
+}
+
+function getDirectories(path) {
+  return fs.readdirSync(path).filter(function (file) {
+    return fs.statSync(path + '/' + file).isDirectory()
+  })
+}
+```

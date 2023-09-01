@@ -1,0 +1,25 @@
+---
+title: 🤖 Installing Pip on macOS
+summary: Learn how to install pip for Python on modern macOS and maintain compatibility with other tools.
+date: '2023-03-27'
+tags: ['Unix']
+draft: false
+---
+
+In this blog post, I'll discuss a situation where I wanted to install a module using pip (the package installer for Python) but encountered an unexpected error: zsh: command not found: pip. This was quite surprising, as I assumed that Python, along with pip, was installed by default on macOS.
+
+As it turns out, while Python is indeed installed by default on macOS, pip is not, and you'll need to download it separately. Additionally, the downloaded version is `pip3`, so you'll have to create an alias for `pip` since some tools or documentation still reference the older command.
+
+To accomplish this, you can use the following one-liner:
+
+```bash
+$ python3 -m ensurepip && echo 'alias pip=pip3' >>~/.bash_profile && source ~/.bash_profile
+```
+
+This command does the following:
+
+- Installs pip directly from the Python3 library
+- Adds an alias `pip -> pip3` to your `~/.bash_profile`, ensuring that you don't have to recreate the alias every time you restart your computer
+- Reloads the `~/.bash_profile` file
+
+After running this command, you should be able to execute the pip command without any issues.

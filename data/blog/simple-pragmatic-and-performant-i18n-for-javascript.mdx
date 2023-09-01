@@ -1,0 +1,82 @@
+---
+title: 🌎 Simple, pragmatic and performant i18n solution for JavaScript applications
+summary: A copy-paste snippet for pragmatic i18n implementation for any modern JavaScript application. Supports dotted paths & TypeScript.
+date: '2022-07-16'
+tags: ['Next.js', 'Performance']
+draft: false
+---
+
+There're great libraries for i18n that support absolutely everything like interpolation with React components, server-side rendering, and code splitting (or maybe I should call it - JSON splitting). This is one example of such library - [react-i18next](https://react.i18next.com/).
+
+The biggest drawback and issue, something that keeps me from using it is its bundle size. Assuming you're using gzip for compression like everyone else, it will take 20kB+ from your bundle. For some people/teams it's an acceptable amount, but for me, I don't believe it to be a good trade-off.
+
+<div
+  style={{
+    display: 'grid',
+    gridGap: '10px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+  }}
+> 
+![i18next package size summary](/static/images/simple-pragmatic-and-performant-i18n-for-javascript/i18next-bundle-size.png)
+
+![react-i18next package size summary](/static/images/simple-pragmatic-and-performant-i18n-for-javascript/react-i18next-bundle-size.png)
+
+</div>
+
+And that's why I decided to write my implementation that has great DX (supports dotted paths with autocompletion) and is easy to scale/maintain. I used the [`js-cookie`](https://github.com/js-cookie/js-cookie) library to get and parse the cookie with legible & declarative API.
+
+The example is done specifically for Next.js, but you can seamlessly port it to any other library/framework.
+
+```tsx
+// i18n.ts
+
+import Cookies from "js-cookie";
+import get from "lodash/get";
+import { en } from "./en";
+
+type Locales = "en";
+
+const defaultTranslations: Record<Locales, Partial<typeof en>> = {
+  en,
+};
+
+export const t = (key: Join<PathsToStringProps<typeof en>, ".">, translations = defaultTranslations) => {
+  const locale = Cookies.get("NEXT_LOCALE") as Locales;
+  return get(translations[locale] || translations["en"], key);
+};
+
+type PathsToStringProps<T> = T extends string
+  ? []
+  : {
+      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
+    }[Extract<keyof T, string>];
+
+type Join<T extends string[], D extends string> = T extends []
+  ? never
+  : T extends [infer F]
+  ? F
+  : T extends [infer F, ...infer R]
+  ? F extends string
+    ? \`\${F}\${D}\${Join<Extract<R, string[]>, D>}\`
+    : never
+  : string;
+```
+
+This is how the translations file looks like
+
+```typescript
+// en.ts
+
+export const en = {
+  ctaSection: {
+    title: 'Some value for demo purposes',
+    // ...The rest of the items, removed for brevity
+  },
+}
+```
+
+And this is how you use it:
+
+![An example of how you could use the "t" function](/static/images/simple-pragmatic-and-performant-i18n-for-javascript/usage.png)
+
+You don't have to worry about the performance unless the file exceeds a few hundred lines. After that, you can use dynamic imports and split the translations file into smaller chunks.

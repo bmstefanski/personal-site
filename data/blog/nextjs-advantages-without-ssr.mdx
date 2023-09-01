@@ -1,0 +1,26 @@
+---
+title: '😎 Unlocking Next.js Benefits: No SSR? No Problem!'
+summary: Explore the benefits of using Next.js for app development, even if you don't require Server Side Rendering. Learn how its features enhance performance, speed up development, and maintain flexibility while simplifying the development process.
+date: '2023-03-22'
+tags: ['Next.js', 'Performance', 'Developer Experience']
+draft: false
+---
+
+Next.js is a powerful framework built on top of React.js, offering numerous advantages over using React.js on its own.
+A common misconception in the industry is that if your application doesn't require Server Side Rendering (SSR), then you shouldn't use Next.js, which is simply not true. Here are some of the beneficial features Next.js offers that can enhance app development:
+
+- **Granular Error Handling** at the component level in the app directory
+- **SSR (Server Side Rendering)** enables moving some heavy logic to the server without involving the backend team, speeding up development. SSR and Static Site Generation (SSG) also prevent Layout Shifts and Loading Screens.
+- **SSG (Static Site Generation)** improves page transitions even when SEO isn't a crucial factor. You can easily switch between SSG and client-side pages with minimal code changes.
+- **Code Splitting** is supported out of the box, with page-based splitting as the default behavior, unlike bare React. This can be achieved using `next/dynamic`.
+- Next.js provides a **production-ready, battle-tested Webpack config** that is open for extensions, ensuring optimal performance and short build times.
+- The `next/image` component, co-created with Google developers, **optimizes image loading and display**, following best practices.
+- The `next/font` module **prevents Layout Shifts** and enhances developer experience by handling 95% of the work, while ensuring top-notch performance.
+- **API Routes** allow moving heavy logic to the server and work best on AWS Lambda, acting as simple, small, independent Node servers.
+- **Opinionated routing** creates a consistent app architecture, making it easier to understand across millions of apps.
+- **Prefetching links** speeds up subsequent requests by prefetching links when hovered or visible in the viewport, which is difficult to achieve in bare React.
+- **Layouts** contribute to a consistent and clean architecture in the app directory, which is hard to achieve in bare React without complex abstraction.
+- Most common **polyfills** are included by default, ensuring compatibility across various browsers.
+- **Advanced i18n support** allows for flexible i18n features without altering routing structures.
+
+In conclusion, Next.js offers numerous performance-related features and accelerates development without sacrificing flexibility. Contrary to requiring more code or configuration, Next.js simplifies development. Configuring React (especially Webpack) to match Next.js's capabilities is no easy task, and every library in the React ecosystem is compatible with Next.js.

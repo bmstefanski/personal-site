@@ -1,0 +1,39 @@
+---
+title: ♻️ Reusing SVG elements in HTML without copy-pasting it
+summary: Snippet for reusing SVG elements in HTML without copy-pasting it. Example made in React.js
+date: '2021-11-23'
+tags: ['React', 'Performance']
+draft: false
+---
+
+Sometimes you might encounter the case where you want to use the same SVGs multiple times across one page. The first example that comes to my mind is the use of social media icons both in the navbar and footer. This is how I would approach this
+
+```tsx
+function SomePage() {
+ return (
+    // Invisible symbol
+    <svg style={{ display: "none" }} version="2.0">
+      <defs>
+        <symbol id="linkedin-badge">
+          /* This is where you would put the contents of the SVG
+          (everything that is inside SVG tag except the tag itself)  */
+        </symbol>
+      </defs>
+    </svg>
+
+
+    // And this is how you would use it
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      version="2.0"
+    >
+      <use href="#linkedin-badge" />
+    </svg>
+  )
+}
+```
+
+Of course, you can just copy-paste it, but it will make the size of your HTML document bigger and delay the [FCP](https://web.dev/first-contentful-paint/).
+You could also export it to a file, and load it through the `image` element, but it would cause flicks, which you probably don't want to have, especially when the element is above the fold.

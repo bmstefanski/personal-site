@@ -1,0 +1,65 @@
+---
+title: 🚀 Setting Up E2E Tests with GitLab CI and Playwright Made Easy
+summary: Discover how to configure GitLab CI and Playwright to run E2E tests automatically for merge requests, streamlining quality control and enhancing your development workflow.
+date: '2023-04-25'
+tags: ['Testing', 'DevOps']
+draft: false
+---
+
+I recently had the opportunity to explore GitLab CI and was pleasantly surprised by its simplicity, compared to GitHub Actions. While working with Playwright, I wanted to automate E2E tests to run every time a merge request is opened. This setup helps maintain code quality and streamline the development process.
+
+Here's a step-by-step guide to configure GitLab CI and Playwright for E2E testing:
+
+1. **Modify the Playwright configuration file**: Edit the `playwright.config.js` file as shown below. Include the `reporter` property only if you want to display [unit test reports](https://docs.gitlab.com/ee/ci/testing/unit_test_reports.html) in the GitLab UI.
+
+```ts
+export default defineConfig({
+  /* ...removed for brevity... */
+  reporter: [["html"], ["junit", { outputFile: "results.xml" }]],
+  use: {
+    /* Base URL to use in actions like \`await page.goto('/')\`. */
+    baseURL: "http://127.0.0.1:3000",
+    trace: "on-first-retry",
+  },
+  /* ...removed for brevity... */
+  webServer: {
+    command: "yarn dev --port 3000",
+    url: "http://127.0.0.1:3000",
+    reuseExistingServer: !process.env.CI,
+  }
+}
+```
+
+The `reuseExistingServer` flag ensures that the local development server is reused instead of starting a new one, unless the CI environment variable is set (i.e., when running tests in GitLab CI).
+
+2. **Update your `gitlab-ci.yml` file**: Add the following step to set up E2E tests in GitLab CI:
+
+```yaml
+E2E tests:
+  interruptible: true
+  when: on_success
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.32.0-focal
+  needs: [Prep] # You may not need this or may adjust it, depending on your setup
+  script:
+    - yarn e2e:headless
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+      - results.xml
+    reports:
+      junit: results.xml
+    expire_in: 1 week
+```
+
+This step defines an E2E test stage, which uses the Playwright Docker image and runs the tests using the `yarn e2e:headless` command.
+
+3. **Add the "e2e:headless" script to `package.json`**:
+
+```json
+"e2e:headless": "playwright test"
+```
+
+With this configuration, GitLab CI will run E2E tests using Playwright automatically for every merge request, ensuring seamless quality control and improving your development workflow.

@@ -1,0 +1,38 @@
+---
+title: 🕹️ How to prettify your cat command
+summary: A guide on how to make your old black and white cat command pretty and more legible
+date: '2023-02-24'
+tags: ['Unix']
+draft: false
+---
+
+I have always used the `cat` command to quickly preview some files or to copy the contents of them to a clipboard. The second part was always working great, but previewing a let's say JavaScript file or RC file was painful, because of the lack of syntax highlighting.
+
+I was too lazy to search for solutions, but my colleague recently showed me something called [bat](https://github.com/sharkdp/bat), which is a cat, but on steroids. Here's a little preview of what it looks like:
+
+![Preview of bat command](/static/images/how-to-prettify-your-cat-unix-command/bat-preview.png)
+
+### Installation and theme setup
+
+You can install it through brew, just like this:
+
+```bash
+$ brew install bat
+```
+
+and if you don't like the default theme, you can choose some that are installed out of the box or [install the custom one](https://github.com/sharkdp/bat#adding-new-themes). I decided to use Nord, which was already installed, here's how I did it:
+
+```bash
+$ mkdir ~/.config/bat
+$ sudo vim ~/.config/bat/config # remember to run it in sudo mode
+```
+
+then paste this line into the config
+
+```bash
+--theme="Nord"
+```
+
+and exit vim with `:wq` and you're done!
+
+P.S you can still copy the contents of the file with `bat something.txt | pbcopy`! 🤠

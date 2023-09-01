@@ -1,0 +1,35 @@
+---
+title: 🌟 Automate React Component Smoke Testing with Storybook
+summary: Discover how to use Storybook to automate smoke testing for your React components, eliminating the need for manual testing and streamlining your development process.
+date: '2023-04-24'
+tags: ['Testing', 'React']
+draft: false
+---
+
+Smoke testing is a technique used to verify that all features work or compile without generating errors. In web development, particularly with React, it can be employed to ensure that components render error-free.
+
+You might have encountered such tests in commercial projects, with names like `should not explode`, `should not throw error while rendering`, or simply `should render`. While they may not provide significant value, and writing them can be frustrating, you can automate these tests using Storybook.
+
+Storybook can automatically run smoke tests for all stories without any additional setup. However, this method only works with stories written in TypeScript (TS), TypeScript React (TSX), JavaScript (JS), or JavaScript React (JSX) file formats. Unfortunately, it does not support MDX stories.
+
+Follow these steps to automate smoke testing with Storybook:
+
+1. **Install the @storybook/test-runner library**: Run the following command to add it to your project:
+
+```bash
+yarn add -D @storybook/test-runner
+```
+
+2. **Update your package.json scripts**: Add the following line to the "scripts" section of your `package.json`:
+
+```json
+"test-storybook": "test-storybook"
+```
+
+3. **Run your local instance of Storybook**: Launch your Storybook server by running `yarn storybook` or `npm run storybook` in your project directory.
+
+4. **Run smoke tests with Storybook**: Execute the smoke tests by running `yarn test-storybook`. If everything works as expected, you'll see all your stories pass the smoke tests.
+
+![Results of smoke testing using Storybook](/static/images/automate-smoke-testing-storybook/results.png)
+
+By leveraging Storybook, you can easily automate smoke testing for your React components, simplifying your development process and avoiding the hassle of writing manual tests.

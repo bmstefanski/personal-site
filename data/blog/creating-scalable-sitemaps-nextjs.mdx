@@ -1,0 +1,108 @@
+---
+title: 🗺️ Creating scalable sitemaps with Next.js
+summary: A go-to solution for creating scalable sitemaps using Next.js with minimal effort and costs
+date: '2021-08-14'
+tags: ['Next.js']
+draft: false
+---
+
+## Table of Contents
+
+<TOCInline toc={props.toc} exclude="Table of Contents" />
+
+## Case and requirements
+
+I wanted to create a script that generates a new sitemap with thousands of items. These were the requirements:
+
+- should display the most recent articles (but a 15/30 minutes-long delay is acceptable). So article published at 10:00 must be included in the sitemap before 10:30
+- should scale well (so not increase infrastructure costs or any costs at all)
+- should be secured against bandwidth attacks or some forms of injection
+
+## Not-ideal solutions
+
+The first idea that came to my mind was to run some sort of script at the build time and then write a `sitemap.xml` file to a `public/` directory. This is the very exact way every library does it. But how do we trigger the build, and when?
+
+Let's say we will trigger the build through our cms' webhook, so every time there's a change in the CMS we build the application and sitemap.
+
+Sounds great, but what if there are multiple changes per second and every one of them is important? Our build queue would be enormous and require you to pay more for CI/CD pipeline. So the first and second requirements wouldn't be fulfilled.
+
+The next solution could be based on the idea of extracting sitemap generation from the application build. These two things would be independent of each other.
+
+So we could trigger the script through some sort of scheduler, like cron, and run it on Github Actions or Gitlab CI. But where would we store that file? We can't alter the `public/` directory in runtime, and it looks like we would need an external service for storing our sitemap, for example, your CMS's storage.
+
+Seems doable, but how would we access the sitemap? We could create an [API Route](https://nextjs.org/docs/api-routes/introduction) that fetches the file from storage and make a rewrite for it in next.config.js `yoursite.com/api/sitemap -> yoursite.com/sitemap.xml`.
+
+- **We don't really need that rewrite, but it looks better and matches the standards**
+
+## Final solution
+
+The previous approach is great, it fulfills all three requirements, but it's relatively complex and could be simplified by a lot.
+
+We can create a server-side rendered page `sitemap.xml.js` that returns cached sitemap with TTL set to 15 minutes. If you don't want to waste time on caching and preventing bandwidth attacks, you can use my library [next-cache-effective-pages](https://github.com/bmstefanski/next-cache-effective-pages) for that.
+
+Here's an example of how that could be done, you can copy & paste it to your project, and the only thing left to do is [adding your sitemap to Google Search Console](https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap#addsitemap) 🤠
+
+**Please note that caching might not work as described in some environments. It all depends on whether your app is proxied by the CDN or not and how it handles caching. If you are using [Vercel](https://vercel.com/docs/edge-network/caching) or [Netlify](https://www.netlify.com/products/edge/), you don't need to worry. But for self-hosted apps caching might be happening only in the browser. So would still be prone to bandwidth attacks.**
+
+One more thing worth mentioning: avoid using `req.headers.host` to get your site's address. It can be easily overwritten.
+
+```bash
+$ curl -s -X GET "http://localhost:3000/sitemap.xml" -H "Host: bababooey.com"`}
+```
+
+```tsx
+import { getAllPosts, getAllPostsSlugs } from 'utils/postsFetcher'
+import { withCacheEffectivePage } from 'next-cache-effective-pages'
+import xmlescape from 'xml-escape'
+import * as xml from 'xml'
+
+export default function Sitemap() {}
+
+export async function getServerSideProps(ctxt) {
+  return withCacheEffectivePage(async ({ res }) => {
+    res.write(mapToXmlFormat(await getAllPosts(), 'https://yoursite.com/'))
+    res.end()
+  })({ ...ctxt, options: { secondsBeforeRevalidation: 60 * 15 } })
+}
+
+function mapToXmlFormat(items, host) {
+  return xml(
+    [
+      {
+        urlset: [
+          {
+            _attr: {
+              xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
+              'xmlns:news': 'http://www.google.com/schemas/sitemap-news/0.9',
+            },
+          },
+          ...items.map((singleItem) => makeSingleSitemapItem(singleItem, host)),
+        ],
+      },
+    ],
+    { declaration: true }
+  )
+}
+
+function makeSingleSitemapItem(post, host) {
+  const {
+    meta: { date, title, tags },
+    slug,
+  } = post
+  const newsTitle = xmlescape(title) || ''
+
+  return {
+    url: [
+      { loc: host + slug },
+      {
+        'news:news': [
+          { 'news:publication': [{ 'news:name': host }, { 'news:language': 'en' }] },
+          { 'news:publication_date': date },
+          { 'news:title': newsTitle },
+          { 'news:keywords': { _cdata: tags } },
+        ],
+      },
+    ],
+  }
+}
+```

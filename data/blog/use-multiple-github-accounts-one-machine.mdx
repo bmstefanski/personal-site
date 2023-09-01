@@ -1,0 +1,78 @@
+---
+title: 💻 How to use multiple GitHub accounts on one machine
+summary: Quick tutorial on how to use multiple GitHub accounts on one machine with SSH keys
+date: '2022-07-23'
+tags: ['DevOps']
+draft: false
+---
+
+I needed to create a new GitHub account for work, but I didn't want to switch my credentials every time I pushed, cloned, or pulled from my private repositories.
+
+I quickly googled how to achieve this without much hassle, and here it is:
+
+### 1. Generate the SSH keys for both your work and private emails.
+
+It will ask you to enter a unique file name and passphrase. I liked the file name pattern from the other [blog post][source], so I borrowed (stole) it 
+- `id_rsa_personal` and `id_rsa_work`
+Don't forget to save the passphrase somewhere safe! For example in [1password](https://1password.com/).
+
+```bash
+$ cd .ssh/
+
+$ ssh-keygen -t rsa -C "your-private-email@email.com"
+$ ssh-keygen -t rsa -C "your-work-email@email.com"
+```
+
+I am not sure if you should keep the commands' output, but I did! Just in case!
+
+### 2. Copy the SSH keys and paste them into the appropriate GitHub account
+
+```bash
+$ ls
+
+$ cat id_rsa_personal.pub | pbcopy
+$ cat id_rsa_work.pub | pbcopy
+```
+
+Log in to the appropriate GitHub account, go to settings. Click on the `SSH and GPG keys`, and paste one of the ssh keys.
+
+### 3. Setup SSH config
+
+You need to create an SSH config with both hosts configured.
+
+```bash
+$ vim ~/.ssh/config
+
+# replace IdentityFile with your own file name and :wq
+
+Host me.github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_personal
+
+Host work.github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_rsa_work
+```
+
+### 4. Add the SSH keys to the SSH Agent
+
+```bash
+$ ssh-add ~/.ssh/id_rsa_personal
+$ ssh-add ~/.ssh/id_rsa_work
+```
+
+### 5. Clone the repository to test things out
+
+```bash
+$ git clone git@work.github.com:orgName/repoName.git
+```
+
+<br />
+<br />
+<br />
+
+Source: [https://www.section.io/engineering-education/using-multiple-ssh-keys-for-multiple-github-accounts/][source]
+
+[source]: https://www.section.io/engineering-education/using-multiple-ssh-keys-for-multiple-github-accounts/

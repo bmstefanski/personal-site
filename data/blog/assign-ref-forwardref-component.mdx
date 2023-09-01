@@ -1,0 +1,95 @@
+---
+title: 👨‍⚖️ How to assign ref in forwardRef component
+summary: How to assign multiple refs to a react component wrapped with forwardRef. Copy-paste solution.
+date: '2022-06-16'
+tags: ['React']
+draft: false
+---
+
+## Context
+
+I had a component that I wanted to pass the `ref` prop into. To do that with React, you have to use `React.forwardRef` function and pass the second argument to the appropriate child component.
+It would look like this:
+
+```tsx
+export const YourComponent = React.forwardRef<HTMLDivElement, YourComponentProps>(
+  function ComponentNameForDebugging({ className, children }, ref) {
+    return (
+      <Wrapper className={className} ref={ref}>
+        {children}
+      </Wrapper>
+    )
+  }
+)
+```
+
+And now, what if I wanted to access that `ref` inside the `YourComponent`. Normally I would try to access it through `ref.current`, but here it's different.
+The `ref` variable (forwardRef's second parameter) doesn't have .current property since it is a function. A function that takes `HTMLDivElement` as an argument.
+
+## Solution
+
+In such a case, what I need to do is:
+
+- create a new ref inside `YourComponent`, let's call it `testRef`,
+- in `Wrapper` component, add lambda function as a value of `ref` prop. With HTMLDivElement as a parameter,
+- assign the value of a lambda's parameter to `testRef.current`
+- call the `ref(el: HTMLDivElement | null)` and pass the lambda's parameter as an argument.
+
+This would look like this:
+
+```tsx
+export const YourComponent = React.forwardRef<HTMLDivElement, YourComponentProps>(
+  function ComponentNameForDebugging({ className, children }, ref) {
+    const testRef = useRef<HTMLDivElement | null>(null)
+
+    return (
+      <Wrapper
+        className={className}
+        ref={(el) => {
+          testRef.current = el
+
+          if (typeof ref === 'function') {
+            ref(el)
+          }
+        }}
+      >
+        {children}
+      </Wrapper>
+    )
+  }
+)
+```
+
+but it doesn't look the best! We could create a simple utility class for that or.... steal it from StackOverflow from the author you don't remember and can't find at the time of writing a blog post!
+
+```tsx
+import { MutableRefObject, Ref } from 'react'
+
+export const assignRefs = <T extends unknown>(...refs: Ref<T | null>[]) => {
+  return (node: T | null) => {
+    refs.forEach((r) => {
+      if (typeof r === 'function') {
+        r(node)
+      } else if (r) {
+        ;(r as MutableRefObject<T | null>).current = node
+      }
+    })
+  }
+}
+```
+
+and the final YourComponent's form is...
+
+```tsx
+export const YourComponent = React.forwardRef<HTMLDivElement, YourComponentProps>(
+  function ComponentNameForDebugging({ className, children }, ref) {
+    const testRef = useRef<HTMLDivElement | null>(null)
+
+    return (
+      <Wrapper className={className} ref={assignRefs(testRef, ref)}>
+        {children}
+      </Wrapper>
+    )
+  }
+)
+```

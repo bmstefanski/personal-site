@@ -1,0 +1,21 @@
+---
+title: 🛠️ Quickly Launch VSCode from Terminal as Admin (2023)
+summary: Easily open VSCode in a desired directory using the terminal by running it as an administrator with this simple solution.
+date: '2023-03-21'
+tags: ['Developer Experience']
+draft: false
+---
+
+I wanted to utilize the code . command in the terminal to directly open VSCode in my desired directory. To achieve this, I navigated to the VSCode Command Palette and chose
+
+- `>Shell Command: Install 'code' command in PATH`.
+
+However, I encountered an error message stating "permissions denied" and that administrator access was required for this action.
+
+After some searching, I discovered several solutions to run VSCode as an administrator. The following command was the only one that worked for me:
+
+```bash
+$ sudo /Applications/Visual\ Studio\ Code.app/Contents/MacOS/Electron; exit
+```
+
+Upon executing this command, VSCode should open, allowing you to select the `>Shell Command: Install 'code' command in PATH` option.

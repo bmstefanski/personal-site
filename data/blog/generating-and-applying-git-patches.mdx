@@ -1,0 +1,44 @@
+---
+title: 🩹 Generating and applying git patches
+summary: A quick guide on how to generate multiple or one squashed patch/patches and apply it/them.
+date: '2023-02-20'
+tags: ['Git']
+draft: false
+---
+
+Git has a feature called [patches](https://git-scm.com/book/id/v2/Appendix-C%3A-Git-Commands-Patching) that is great for quickly delivering stuff to other teams when there's a fire happening.
+It might not be the most elegant solution, since sending the code in a form of file doesn't sound too safe, but hey, it works and does the job!
+
+In the nice happy world you would just add another remote and cherry pick stuff from one to another.
+This sounds solid, but sometimes takes quite a while, especially if you want to push to some new repository, on a different git provider and you need to setup a new SSH keys just for one pull and one push.
+Doesn't seem pragmatic to me. In such cases, I tend to just go with the patches. There are two ways of patching that you can choose from.
+
+### Multiple patch files
+
+The first one will generate multiple patch files. One per commit. Here's how you do this:
+
+```bash
+$ git format-patch -3
+```
+
+It will create a patch files from the last three commits. And then apply it with (not sure what `am` acronym means, but I always translate it to `apply many`)
+
+```bash
+$ git am
+```
+
+Git will automatically scan for those files and apply them in correct order.
+
+### Single patch file
+
+Or the second way, my favorite, is squashing everything into one patch file, like so:
+
+```bash
+$ git format-patch -3 --stdout > your-patch-name.patch
+```
+
+and then applying it with
+
+```bash
+$ git apply your-patch-name.patch
+```

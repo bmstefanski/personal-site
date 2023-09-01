@@ -1,0 +1,76 @@
+---
+title: 🧪 Can SVG Symbols affect web performance?
+summary: When it comes to repeatable SVGs, most people would create a component and reuse it anywhere they want. There's a high chance, that you would be missing some performance freebies. If you're striving for that bang-for-the-buck kind of performance, this article might be interesting for you.
+date: '2022-07-17'
+tags: ['Performance']
+draft: false
+---
+
+SVG Symbol is an unvisited technique for reusing inlined SVGs elements. They seem redundant while using popular component-based frameworks/libraries like React, Vue, Svelte, hence you don't see it a lot on the web.
+
+When it comes to repeatable SVGs, most people would create a component and reuse it anywhere they want. It is a valid solution. But there's a high chance, that **you would be missing some performance freebies**.
+
+If you're striving for that _bang-for-the-buck_ kind of performance, this article might be interesting for you.
+
+The whole idea builds around declaring your SVG element ONCE (per page), and reusing it as many times as you want without losing any performance. Every website has some kind of SVGs, some of them are most likely inlined (to prevent flicking) and some are not. But the point is, you will find a lot of occurrences that are repeatable, once, twice, three times, or even one hundred times. Here're some generic examples:
+
+- **Logo or logotype of your website** - you have this in many places like footer, navbar, mobile drawer, etc.
+- **Social media icons** - can hide in the mobile drawer and it is pretty much standard to see them in the footer
+- **Decoration elements (like blobs or waves)** - tend to be quite complex and can impact performance
+- **Like, dislike, follow, unfollow buttons**
+
+The more fancy looking, the more complex your SVG is. And so, it increases the size of your HTML document and the number of elements the browser will have to parse and put in DOM. Even simple social icons can have 5kB each. Let's say we have 5 of them (e.g. Facebook, Instagram, discord, GitHub, LinkedIn). As they're placed in two places (drawer and footer) - it is 50kB of resources and duplicated icons take half of it. With symbols, we can lower that 50kB to 25kB, with almost zero effort.
+
+```tsx
+function SomePage() {
+  return (
+  	<>
+      {/* Declaration of repeatable elements */}
+      <svg style={{ display: "none" }} version="2.0">
+        <defs>
+          <symbol id="linkedin-badge">
+            {/* Put the contents of your svg tag here */}
+          </symbol>
+        </defs>
+      </svg>
+
+      {/* This is how you use it */}
+      {Array.from({ length: 100, () => (
+        <svg width="32" height="32" viewBox="0 0 32 32" version="2.0">
+          <use href="#linkedin-badge" />
+        </svg>
+      ))}
+    </>
+  )
+}
+```
+
+The use of symbols is not limited to whole SVG elements. You can use it INSIDE your SVG. So if you have repeatable paths, circles, or gradients you can reuse them and make the size of the element smaller as well as the overall size of the page.
+
+Sounds good, but I still needed a prototype that will show me the proof. So I created a simple Next.js application, containing a few pages with two variants. One variant displays X number of SVGs using symbols and the other without them.
+
+For starters, I went with the amount that will fit any website, so 5 repeatable SVG elements. In the context of metrics, I picked one that I focused on the most, which is FCP (First Contentful Paint). It tells us how much do we need to wait before anything meaningful appears on the screen. So, you can treat it as a sum of the following metrics: Parsing HTML, Re-calculating styles, etc.
+
+![Results of the first test](/static/images/can-svg-symbols-affect-web-performance/results-1.png)
+
+And... the results are surprising. Both variants seem to produce similar FCP scores. The variant without the symbols has a little bit of advantage. But they seem fluctuant, so I would say both are pretty much the same in the real world. One aspect that they seem to differ much in, is the decoded document size, so the size of the original document.
+
+Before it gets sent to the browser, our Next.js server compresses it (using gzip) and by that, reduces its size to 2.1kb. When the browser receives it, it starts decompressing it. Then goes to parsing the HTML, and doing lots of additional work. With that being said, you should strive to keep both (Decoded & Encoded Documents) sizes low.
+
+The lower the encoded size, the better for your bandwidth usage. And the lower the decoded size, the better for your CPU. Both can improve FCP.
+
+![Diagram of file transform through network](/static/images/can-svg-symbols-affect-web-performance/diagram.png)
+
+I was curious, how it behaves in a bigger, but still reasonable scale. So I rendered a page with 100 SVG elements and ran the profiler on both variants once again.
+
+![Results of the second test](/static/images/can-svg-symbols-affect-web-performance/results-2.png)
+
+What we can observe is the fact that the bigger the document, the more benefits we get from using symbols. In this case, we improved our FCP score by approximately 60ms. All as a result of a smaller size of the original document (94% smaller - which is an insane improvement).
+
+The last test is meritless for most applications. Because it is hard to encounter a page that cares about performance while having 5000 repeatable elements. These kinds of pages usually have some pagination or lazy loading. But hey, maybe there are some and they will enjoy reading the results. So let's get down to the nitty-gritty 🤠
+
+![Results of the third test](/static/images/can-svg-symbols-affect-web-performance/results-3.png)
+
+And the final results are even more surprising than the previous one. Our First Contentful Paint metric got improved by 4 times. From dreadful to pretty good and standard-matching score. The size of the original file went from 10MB to 429 kB so smaller by 95% (almost the same as in the last test).
+
+In such a scenario, we get both, performance AND bandwidth usage benefits. Our website is faster and we pay less. You can expect a similar gauge of improvements with 500 and 1000 elements.

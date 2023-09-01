@@ -1,0 +1,30 @@
+---
+title: 🤖 Quickly scrape tweets without API or headless browser
+summary: A quick way to scrape unlimited amount of tweets without API or headless browser.
+date: '2023-02-20'
+tags: []
+draft: false
+---
+
+Writing a scraping tool is a boring process, you have to use headless browser or an API (but that wouldn't be called scraping, would it?).
+It takes a lot of time to develop and run such a tool. Whenever possible, it's best to avoid writing a standalone application for that.
+
+My goal was to gather links to some tweets that were listed under Twitter's search page. I went to the search page, put this little snippet that I wrote in the DevTools and started scrolling until I was satisfied with the results.
+It will probably stop working in the near future, since it is fully based on text content of some DOM nodes, but you can of course take a look at Twitter's DOM and modify it to your needs.
+
+```typescript
+const links = new Set()
+
+window.addEventListener('scroll', () =>
+  [
+    ...document.querySelector('[aria-label="Timeline: Search timeline"').children[0].children,
+  ].forEach((el) => {
+    const singleLink = el.querySelectorAll('a')[3]
+    if (singleLink) {
+      links.add(singleLink.getAttribute('href'))
+    }
+  })
+)
+
+console.log(links)
+```

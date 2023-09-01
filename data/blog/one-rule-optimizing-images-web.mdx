@@ -1,0 +1,24 @@
+---
+title: 🖼️ One rule for optimizing images on the web
+summary: The only rule you need to serve well-optimized images on the web
+date: '2022-04-30'
+tags: ['Next.js', 'Performance']
+draft: false
+---
+
+A good rule of thumb for optimizing images: **Lazy load everything that is below the fold, eagerly load everything above the fold, with fetch priority set to high**. Serve all images in webp/avif format.
+
+Although native lazy loading is getting traction right now. I would not recommend using it, since it is only lazy-loading if the user's network is slow, which is unreliable and can hurt your website's bandwidth usage. Read more this new feature here https://addyosmani.com/blog/lazy-loading/
+
+AVIF images are ~20% smaller than WebP ones, but they also take 20% longer to generate. AVIF is [supported only by Chrome & Firefox](https://caniuse.com/avif). Use AVIF if you generate images in build time and WebP if in runtime.
+
+WebP is [well supported](https://caniuse.com/webp) in all major browsers, except older versions of Safari, so remember to always have a fallback for JPEGs
+
+There are at least two ways to serve optimized images in HTML:
+
+- [Picture element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture)
+- [Img element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#using_the_srcset_and_sizes_attributes)
+
+Both work very similarly, but the picture element allows to declare fallback whilst img element does not.
+
+If you're using Next.js I highly recommend checking out next/image component. It has great defaults, adapts best practices, and works great in small & big scale projects. https://nextjs.org/docs/basic-features/image-optimization

@@ -1,0 +1,53 @@
+---
+title: ⛔ How to ban imports with ESLint
+summary: Sometimes you don't want to use some modules from a library or other part of your code. Or you want to prevent your colleagues from using them. This post gives you a ready-to-use solution for banning imports with ESLint.
+date: '2022-07-22'
+tags: ['Clean Code']
+draft: false
+---
+
+Sometimes you don't want to use some modules from a library or other part of your code.
+
+Maybe you're using a third-party dependency that contains modules with poor performance, bugs, or doesn't tree-shake them correctly. Maybe you want to create a modular architecture with ESLint config per module and ban imports from other modules.
+
+No matter the use case, the goal is the same - you want to prevent your colleagues (or your future self) from using it.
+
+For such and other cases, you can use the [no-restricted-imports](https://eslint.org/docs/latest/rules/) rule in ESLint. In the example given below, I banned the performance-heavy modules in the Chakra-UI library. If someone tries to use it, it will throw an error.
+
+```ts
+module.exports = {
+  // ... removed for brevity
+  rules: {
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: '@chakra-ui/react',
+            importNames: [
+              'Modal',
+              'Checkbox',
+              'Drawer',
+              'Collapse',
+              'Fade',
+              'ScaleFade',
+              'SlideFace',
+              'Slide',
+              'Transition',
+              'Menu',
+              'Accordion',
+              'Toast',
+              'Tooltip',
+              'Popover',
+              'PopoverTransition',
+            ],
+            message:
+              'These imports are banned due to their dependence on framer-motion which bloats our bundle size. Please use our own implementation of that component. ',
+          },
+        ],
+      },
+    ],
+    // ... removed for brevity
+  },
+}
+```

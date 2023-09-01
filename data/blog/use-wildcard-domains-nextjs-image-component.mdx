@@ -1,0 +1,61 @@
+---
+title: 🦸🏼 How to use wildcard domains with Next.js Image component
+summary: A guide on how to use next/image component with wildcard subdomains. Useful when integrating with external providers, like Facebook or Instagram.
+date: '2022-03-05'
+tags: ['Next.js']
+draft: false
+---
+
+Some time ago, I was integrating an app with a medium RSS feed, and I ran into a lot of obstacles. Most of them being to the fact that Medium does not want you to use their data. As a consequence, all APIs were deprecated, the API key creation capability was removed, and RSS feeds were proxied by Cloudflare. But, the issue we’re going to cover in this article doesn’t fit in the category.
+
+I wanted to get four things from the Medium, the title, description, date, and image of the three last articles. After resolving all the unrelated issues, I created a component that uses next/image to render the image, added the image's domain to the config, and discovered a problem. A problem was that each image had a different subdomain.
+
+For example, The first image could be `https://cdn-images-1.medium.com/imagePath....`, and the second one `https://cdn-images-4.medium.com/imagePath....`. At first, it seemed like the solution is quite simple, just add both subdomains to the next.config.js
+
+```typescript
+// next.config.js
+
+module.exports = {
+  images: {
+    domains: ['cdn-images-1.medium.com', 'cdn-images-4.medium.com'],
+  },
+})
+```
+
+It would work, but it is not reliable since the subdomain is dynamic, it can change anytime when fetching new content. So rather than adding all the domains to the config, we could resolve this issue with a simple regex. So I tried it and quickly found out that it is not supported in next.js. At first, I did not understand why, but then it became clear - it could create a security loophole if the regex was not strict enough.
+So, since both solutions were not enough, I decided to build a custom one, an image proxy that downloads an image and pipes it back to the browser. Of course, with all the validation stuff to make it more secure.
+
+It ended up being big enough to make a library out of it, and here is how you would use it:
+
+```tsx
+// pages/api/imageProxy.ts
+
+import { withImageProxy } from '@blazity/next-image-proxy'
+
+export default withImageProxy({ whitelistedPatterns: [/^https?:\\/\\/(.*).medium.com/] })
+```
+
+```tsx
+import NextImage from 'next/image'
+
+export function SomeComponent() {
+  const actualImageUrl = '<https://cdn-images-1.medium.com/max/1024/1*xYoAR2XRmoCmC9SONuTb-Q.png>'
+
+  return <NextImage src={\`/api/imageProxy?imageUrl=\${actualImageUrl}\`} width={700} height={300} />
+}
+```
+
+It is written with TypeScript, so you do not have to worry about types, and you can download it through npm:
+
+```typescript
+$ npm i --save @blazity/next-image-proxy
+```
+
+or
+
+```typescript
+$ yarn add @blazity/next-image-proxy
+```
+
+Github: [https://github.com/Blazity/next-image-proxy](https://github.com/Blazity/next-image-proxy)  
+Example: [https://next-image-proxy.vercel.app/](https://next-image-proxy.vercel.app/)

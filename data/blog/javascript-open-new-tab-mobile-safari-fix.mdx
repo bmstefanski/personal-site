@@ -1,0 +1,27 @@
+---
+title: 🐯 Opening New Tabs on Mobile Devices with JavaScript, Safari-Friendly
+summary: Learn a simple workaround for opening new tabs on mobile devices using JavaScript that is compatible with Safari's security policies.
+date: '2023-03-21'
+tags: ['Developer Experience']
+draft: false
+---
+
+I recently encountered a situation where I needed to open a new tab on mobile devices using JavaScript. Initially, I used the following code:
+
+```js
+window.open(url, '_blank')
+```
+
+It worked well, but when I tested it on Safari, I quickly discovered that Safari's security policies prevent opening a new tab within an asynchronous function, such as inside a promise. To address this issue, I had to find a workaround.
+
+The most effective workaround I found involved the following steps:
+
+```js
+var windowReference = window.open()
+
+myService.getUrl().then(function (url) {
+  windowReference.location = url
+})
+```
+
+The key here is to declare a variable with a reference to the `window.open()` object outside of the asynchronous function. Then, reassign the location to the desired URL where you previously called the window.open function.

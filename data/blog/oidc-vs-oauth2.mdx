@@ -1,0 +1,41 @@
+---
+title: 🔑 Open ID Connect vs OAuth2
+summary: A comparison between Open ID Connect and OAuth2 protocols. Learn about the differences between authentication and authorization and why you shouldn't use OAuth2 for authentication or identity management
+date: '2022-12-12'
+tags: ['Security']
+draft: false
+---
+
+OpenID Connect is a protocol that allows you to authenticate your users in a secure, standardized, and centralized manner. It also provides identity management. It relies on **Identity Providers** (the official term for that is **Authorization Server**) to handle authentication securely and verify the identities.
+
+I was wondering why everyone says I can't use OAuth2 for authentication. How is that not possible? I have been doing that for years and after those years of unsecured authentication, it finally clicked.
+It can be used for authentication and it still is by a lot of small services with bad engineering practices. There's one major problem with using it, it is not safe. You can save the Access Token returned from Resource Server and act like it's proof that the user is authenticated, but it's not. The user could lo-gin into some shady website, and leave their (user) access token there. The token could get stolen or exposed and then possibly used to authenticate the user in your app.
+
+With OIDC you get ID Token in a form of JWT (in a standardized way). The token contains **registered claims** that inform you about when and where the token was issued, and this gives you proof that the Token is valid and the user is authenticated.
+
+## Entity vs Identity
+
+An entity is a thing that exists as an individual unit while identity is a set of attributes (called **Claims**) that you can use to distinguish this entity within a context. For example, you are an entity, but not an identity. Your attributes, so for example, name, age, or your mother's name are the attributes that create your identity.
+An entity can have more than one identity that will have different attributes depending on the context. When you go to the bank, they perceive you differently than your mother does. That means, you have multiple identities and you can use the one that is matching the context.
+
+## Authorization vs Authentication
+
+This is quite simple, but most articles make it sound like a complicated thing. So, authenticating means you're trying to verify that the identity belongs to you. Whereas authorizing refers to you using the identity to ask if you can access some resource or ask what actions you can do. You can use authentication for authorization, but not the other way around.
+
+## OIDC vs OAuth2
+
+Many features of OIDC match OAuth2 features because OIDC is a superset of OAuth2, that adds authentication to the mix.
+
+Typical OAuth2 flow would look like this:
+
+- A user (**Resource Owner**) clicks the button on your page to authorize the application (**Client**) to post videos on their Youtube channel, on their behalf.
+- It redirects the user to Youtube API (**Resource Server**) to ask if they agree to grant the application access to your Youtube channel.
+- If the user agrees, the Resource Server will redirect back to the Client with a token called **Access Token** that can be used for authorization. Some Resource Providers, like Facebook, return a short-lived token that you have to exchange for a long-lived one.
+
+You can't use that **Access Token** to authenticate or log in to their Youtube channel, but you can use it to perform some actions. With OIDC, the flow would look very similar, but instead of **Access Token**, you would get **ID Token** containing information about your entity.
+
+Sources:
+
+- [Why you shouldn't use OAuth2 for authentication](http://www.thread-safe.com/2012/01/problem-with-oauth-for-authentication.html)
+- [Facebook OAuth2 authentication dangerous bug](http://blog.intothesymmetry.com/2014/04/oauth-2-how-i-have-hacked-facebook.html)
+- [OpenID Connect Handbook by Auth0](https://auth0.com/resources/ebooks/the-openid-connect-handbook)

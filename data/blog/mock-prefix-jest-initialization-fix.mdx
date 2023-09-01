@@ -1,0 +1,35 @@
+---
+title: 🔧 Using the 'mock' Prefix to Resolve Jest Initialization Issues
+summary: Learn how the 'mock' prefix can help solve variable initialization challenges in Jest tests by bypassing hoisting issues within custom factory functions.
+date: '2023-04-23'
+tags: ['Testing']
+draft: false
+---
+
+I recently encountered an unusual issue while writing unit tests with Jest. I needed to create a mock for an external library, and the automatic mocking provided by Jest wasn't sufficient for my requirements. As a result, I used the `jest.mock()` function with a custom factory.
+
+Everything seemed to be working well until I attempted to move a variable used inside the factory out of its scope. This variable was a spy function that I planned to use to assert that it had been called with the correct arguments. However, every time I ran the test, I received a `Cannot access 'myMock' before initialization` error. At that point, this error didn't make sense, as 'myMock' had been declared before the mock.
+
+Later, I discovered that all `jest.mock` calls are hoisted, meaning they are moved to the top of the file to reserve space in memory. Consequently, the 'myMock' variable was genuinely undefined at that stage. The Jest documentation didn't provide any solution for this issue, but I learned that prefixing the variable with the 'mock' keyword can bypass the whole mechanism (or even hoist the variable as well).
+
+To use a variable inside a custom factory, you can follow this approach:
+
+```typescript
+// Invalid - out of scope variable without 'mock' prefix  
+const info = jest.fn();  
+jest.mock('./module', () => {  
+  return {  
+    getInfo: info,  
+  };  
+});  
+  
+// Valid - out of scope variable with 'mock' prefix  
+const mockInfo = jest.fn();  
+jest.mock('./module', () => {  
+  return {  
+    getInfo: mockInfo,  
+  };  
+})
+```
+
+By using the 'mock' prefix for variables in your Jest tests, you can easily overcome the initialization issues caused by Jest's hoisting mechanism, enabling you to write more effective unit tests.
