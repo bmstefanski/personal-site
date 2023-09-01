@@ -3,11 +3,8 @@ import { Mail, Github, Facebook, Youtube, Linkedin, Twitter, Mastodon } from './
 const components = {
   mail: Mail,
   github: Github,
-  facebook: Facebook,
-  youtube: Youtube,
   linkedin: Linkedin,
   twitter: Twitter,
-  mastodon: Mastodon,
 }
 
 type SocialIconProps = {
