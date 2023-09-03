@@ -24,15 +24,6 @@ export const metadata: Metadata = {
     template: `%s | ${siteMetadata.title}`,
   },
   description: siteMetadata.description,
-  openGraph: {
-    title: siteMetadata.title,
-    description: siteMetadata.description,
-    url: './',
-    siteName: siteMetadata.title,
-    images: [siteMetadata.socialBanner],
-    locale: 'en_US',
-    type: 'website',
-  },
   alternates: {
     canonical: './',
     types: {

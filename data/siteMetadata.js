@@ -9,7 +9,7 @@ const siteMetadata = {
   siteUrl: 'https://bstefanski.com',
   siteRepo: 'https://github.com/bmstefanski/personal-site',
   siteLogo: null,
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: null,
   mastodon: null,
   email: 'contact@bstefanski.com',
   github: 'https://github.com/bmstefanski',

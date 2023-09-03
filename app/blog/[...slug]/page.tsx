@@ -12,6 +12,8 @@ import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
+import { redirect } from 'next/navigation'
+import { formatDate } from 'pliny/utils/formatDate'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -39,15 +41,6 @@ export async function generateMetadata({
   const publishedAt = new Date(post.date).toISOString()
   const modifiedAt = new Date(post.lastmod || post.date).toISOString()
   const authors = authorDetails.map((author) => author.name)
-  let imageList = [siteMetadata.socialBanner]
-  if (post.images) {
-    imageList = typeof post.images === 'string' ? [post.images] : post.images
-  }
-  const ogImages = imageList.map((img) => {
-    return {
-      url: img.includes('http') ? img : siteMetadata.siteUrl + img,
-    }
-  })
 
   return {
     title: post.title,
@@ -61,14 +54,12 @@ export async function generateMetadata({
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
       url: './',
-      images: ogImages,
+      images: [
+        `/api/og-article?title=${post.title}&date=${formatDate(post.date)}&readTime=${Math.round(
+          post.readingTime.minutes
+        )}`,
+      ],
       authors: authors.length > 0 ? authors : [siteMetadata.author],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: post.title,
-      description: post.summary,
-      images: imageList,
     },
   }
 }
@@ -100,6 +91,12 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
   const prev = sortedCoreContents[postIndex + 1]
   const next = sortedCoreContents[postIndex - 1]
   const post = allBlogs.find((p) => p.slug === slug) as Blog
+
+  if (post.external) {
+    redirect(post.external)
+    return
+  }
+
   const authorList = post?.authors || ['default']
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find((p) => p.slug === author)
