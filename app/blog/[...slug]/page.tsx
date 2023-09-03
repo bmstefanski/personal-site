@@ -55,10 +55,16 @@ export async function generateMetadata({
       modifiedTime: modifiedAt,
       url: './',
       images: [
-        `/api/og-article?title=${post.title}&date=${formatDate(post.date)}&readTime=${Math.round(
-          post.readingTime.minutes
-        )}`,
+        {
+          width: 1200,
+          height: 630,
+          type: 'image/png',
+          url: `/api/og-article?title=${post.title}&date=${formatDate(
+            post.date
+          )}&readTime=${Math.round(post.readingTime.minutes)}`,
+        },
       ],
+
       authors: authors.length > 0 ? authors : [siteMetadata.author],
     },
   }

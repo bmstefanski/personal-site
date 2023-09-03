@@ -9,7 +9,7 @@ interface PageSEOProps {
   [key: string]: any
 }
 
-export function genPageMetadata({ title, description, image, ...rest }: PageSEOProps): Metadata {
+export function genPageMetadata({ title, description, ...rest }: PageSEOProps): Metadata {
   return {
     title,
     openGraph: {
@@ -17,14 +17,28 @@ export function genPageMetadata({ title, description, image, ...rest }: PageSEOP
       description: description || siteMetadata.description,
       url: './',
       siteName: siteMetadata.title,
-      images: ['/api/og'],
+      images: [
+        {
+          width: 1200,
+          height: 630,
+          type: 'image/png',
+          url: `/api/og`,
+        },
+      ],
       locale: 'en_US',
       type: 'website',
     },
     twitter: {
       title: `${title} | ${siteMetadata.title}`,
       card: 'summary_large_image',
-      images: image ? [image] : ['/api/og'],
+      images: [
+        {
+          width: 1200,
+          height: 630,
+          type: 'image/png',
+          url: `/api/og`,
+        },
+      ],
     },
     ...rest,
   }
