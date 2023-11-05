@@ -12,6 +12,7 @@ const Card = ({ title, description, imgSrc, href }) => (
         (href ? (
           <Link href={href} aria-label={`Link to ${title}`}>
             <Image
+              style={{ objectPosition: 'top' }}
               alt={title}
               src={imgSrc}
               className="object-cover object-center md:h-36 lg:h-48"
@@ -38,7 +39,10 @@ const Card = ({ title, description, imgSrc, href }) => (
             title
           )}
         </h2>
-        <p className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400">{description}</p>
+        <div
+          className="prose mb-3 max-w-none text-gray-500 dark:text-gray-400"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
         {href && (
           <Link
             href={href}
