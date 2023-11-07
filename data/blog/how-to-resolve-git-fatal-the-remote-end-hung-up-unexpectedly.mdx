@@ -1,0 +1,38 @@
+---
+title: "🎲 How to resolve Git fatal: the remote end hung up unexpectedly"
+date: '2023-11-07'
+tags: ['Git']
+draft: false
+---
+
+While attempting to commit with a batch of images to my Git repo, I encountered this error:
+
+```bash
+error: RPC failed; HTTP 500 curl 22 The requested URL returned error: 500
+send-pack: unexpected disconnect while reading sideband packet
+Writing objects: 100% (64/64), 205.66 MiB | 17.18 MiB/s, done.
+Total 64 (delta 12), reused 0 (delta 0), pack-reused 0
+fatal: the remote end hung up unexpectedly
+```
+
+This occurred because the size of the commit exceeded Git's default size limit.
+
+To increase the limit, use the following command:
+
+```bash
+git config http.postBuffer 524288000
+```
+
+Alternatively, for SSH:
+
+```bash
+git config ssh.postBuffer 524288000
+```
+
+This setting will accommodate changes up to 500 MB. To apply this change universally, include the `—global` flag. For even larger files, adjust the limit as necessary.
+
+Keep in mind, Github's maximum file size limit is **2 GiB**:
+
+```bash
+git config http.postBuffer 2147483648
+```
