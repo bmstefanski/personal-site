@@ -1,0 +1,33 @@
+---
+title: "🛀 How to use custom theme in Vim"
+date: '2023-11-21'
+tags: ['Unix']
+draft: false
+---
+
+There are numerous methods for installing a custom theme in your VIM setup, but the easiest I've found is through VimPlug. Here are the steps I followed to accomplish this:
+
+1. Install [vim-plug](https://github.com/junegunn/vim-plug) 
+
+This can be easily done by executing the following command:
+
+```bash
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+
+2. Next, add vim-plug to your vim configuration, which is located in the `~/.vimrc` file (don't worry if it's empty).
+
+You can copy and paste the following configuration file, replacing `olivercederborg/poimandres` with the theme of your choice:
+
+```lua
+call plug#begin()
+
+Plug 'olivercederborg/poimandres.nvim'
+
+call plug#end()
+```
+
+3. Reload your terminal.
+
+4. Open vim, press esc, and type `:PlugInstall`. Now you're all set
