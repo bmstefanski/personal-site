@@ -1,3 +1,10 @@
+:root {
+  --circleSize: 600px;
+  @media (max-width: 1200px) {
+    --circleSize: 150px;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
