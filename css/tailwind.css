@@ -1,5 +1,5 @@
 :root {
-  --circleSize: 600px;
+  --circleSize: 500px;
   @media (max-width: 1200px) {
     --circleSize: 150px;
   }

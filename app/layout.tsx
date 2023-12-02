@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
       <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
-      <body className=" text-black antialiased bg-[#10172A] to-slate-950 relative bg-gradient-to-r from-slate-900 dark:text-white">
+      <body className="text-black antialiased bg-[#10172A] to-slate-950 relative bg-gradient-to-r from-slate-900 dark:text-white">
         {/* <ThemeProviders> */}
         <Spotlight>
           <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
