@@ -8,7 +8,7 @@ const ArticleCard = async ({ title, imgSrc, href, date, locale }) => {
       <div
         className={`${
           imgSrc && 'h-full'
-        }  overflow-hidden rounded-md border-2 border-gray-200 border-opacity-60 dark:border-gray-700 transition-all group-hover:border-primary-900 border-transparent `}
+        }  overflow-hidden rounded-md border-2 p-1 border-gray-200 border-opacity-60 dark:border-gray-700 transition-all group-hover:border-primary-900 border-transparent `}
       >
         {imgSrc &&
           (href ? (
@@ -17,7 +17,7 @@ const ArticleCard = async ({ title, imgSrc, href, date, locale }) => {
                 style={{ objectPosition: 'top' }}
                 alt={title}
                 src={imgSrc}
-                className="object-cover object-center md:h-36 lg:h-[350px]"
+                className="object-cover rounded-t-sm group-hover:scale-105 transition-all duration-300 object-center md:h-36 lg:h-[350px]"
                 width={384}
                 height={384}
               />
