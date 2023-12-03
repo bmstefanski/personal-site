@@ -8,7 +8,7 @@ const ArticleCard = async ({ title, imgSrc, href, date, locale }) => {
       <div
         className={`${
           imgSrc && 'h-full'
-        }  overflow-hidden rounded-md border-2 p-1 border-gray-200 border-opacity-60 dark:border-gray-700 transition-all group-hover:border-primary-900 border-transparent `}
+        }  overflow-hidden rounded-md border-2 border-gray-200 border-opacity-60 dark:border-gray-700 transition-all group-hover:border-primary-900 border-transparent `}
       >
         {imgSrc &&
           (href ? (
