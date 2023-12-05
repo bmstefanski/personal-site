@@ -39,7 +39,7 @@ export default function Home({ posts }) {
         </div>
         <div className="w-full lg:w-1/2 mt-6 lg:mt-0 ">
           <Image
-            className="rounded-lg shadow-lg ml-auto mix-blend-luminosity "
+            className="rounded-lg shadow-lg ml-auto object-cover mix-blend-luminosity h-[550px] "
             src="/static/images/pp.png"
             alt="Ai generated image of Bart"
             width="400"
