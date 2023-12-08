@@ -17,6 +17,8 @@ const ArticleCard = async ({ title, imgSrc, href, date, locale }) => {
                 style={{ objectPosition: 'top' }}
                 alt={title}
                 src={imgSrc}
+                sizes="400px"
+                loading="lazy"
                 className="object-cover rounded-t-sm group-hover:scale-105 transition-all duration-300 object-center md:h-36 lg:h-[350px]"
                 width={384}
                 height={384}

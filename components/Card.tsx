@@ -85,7 +85,14 @@ const Card = async ({ title, description, imgSrc, href, repoUrl }) => {
               className="text-base font-medium leading-6 text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
               aria-label={`Link to ${title}`}
             >
-              Learn more &rarr;
+              <svg
+                className="fill-gray-300"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="12"
+              >
+                <path d="M9.586 5 6.293 1.707 7.707.293 13.414 6l-5.707 5.707-1.414-1.414L9.586 7H0V5h9.586Z"></path>
+              </svg>
             </Link>
           )}
         </div>
