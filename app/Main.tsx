@@ -3,6 +3,7 @@ import GithubGraphSection from '@/components/GithubGraph'
 import HeroSection from '@/components/HeroSection'
 import LatestArticles from '@/components/LatestArticles'
 import Link from '@/components/Link'
+import StatsSection from '@/components/StatsSection'
 import Tag from '@/components/Tag'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import SocialIcon from '@/components/social-icons'
@@ -15,9 +16,9 @@ import { formatDate } from 'pliny/utils/formatDate'
 
 export default function Home({ posts }) {
   return (
-    <div className="w-full flex flex-col gap-20">
+    <div className="w-full flex flex-col gap-28">
       <HeroSection />
-
+      <StatsSection />
       <GithubGraphSection />
       <LatestArticles posts={posts} />
 

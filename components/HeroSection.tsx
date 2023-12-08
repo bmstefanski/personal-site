@@ -10,18 +10,17 @@ export default function HeroSection() {
           Hello, I'm <br />
           <span className="text-white ">Bart Stefanski</span>
         </p>
-        <p className="mb-6 text-lg">
+        <p className="mb-6 text-xl">
           Software developer focused on crafting robust web experiences. Skilled in advising on web
           platform, performance, developer experience, and expert in Next.js & React.js.
         </p>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-bold mb-2 uppercase">Socials</h3>
-            <div className="flex gap-4">
-              <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size={6} />
-              <SocialIcon kind="github" href={siteMetadata.github} size={6} />
-              <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={6} />
-              <SocialIcon kind="twitter" href={siteMetadata.twitter} size={6} />
+            <div className="flex gap-6">
+              <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size={8} />
+              <SocialIcon kind="github" href={siteMetadata.github} size={8} />
+              <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={8} />
+              <SocialIcon kind="twitter" href={siteMetadata.twitter} size={8} />
             </div>
           </div>
         </div>
