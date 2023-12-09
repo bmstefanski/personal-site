@@ -20,6 +20,7 @@ export default function Projects() {
           <div className="-m-4 flex flex-wrap">
             {projectsData.map((d) => (
               <Card
+                className={'max-w-[544px] p-4 md:w-1/2'}
                 key={d.title}
                 title={d.title}
                 description={d.description}

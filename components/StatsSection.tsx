@@ -23,7 +23,7 @@ export default function StatsSection() {
           <div className="flex flex-col">
             <dt className="mb-2 text-3xl md:text-4xl font-extrabold">25+</dt>
             <dd className="font-light text-gray-500 dark:text-gray-400">
-              Extensive work with various individuals and organizations
+              Extensive projects with various individuals and organizations
             </dd>
           </div>
           <div className="flex flex-col">

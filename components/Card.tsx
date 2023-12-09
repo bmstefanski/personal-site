@@ -1,7 +1,7 @@
 import Image from './Image'
 import Link from './Link'
 
-const Card = async ({ title, description, imgSrc, href, repoUrl }) => {
+const Card = async ({ title, description, imgSrc, href, repoUrl, className }) => {
   let stars = null
   if (repoUrl) {
     const strippedRepoUrl = repoUrl.replace('https://github.com/', '')
@@ -12,9 +12,9 @@ const Card = async ({ title, description, imgSrc, href, repoUrl }) => {
   }
 
   return (
-    <div className="relative md max-w-[544px] p-4 md:w-1/2">
+    <div className={'relative ' + className}>
       {stars ? (
-        <span className="shadow-md inline-flex justify-center gap-1 items-center absolute right-[8px] top-[8px] bg-gray-900 py-2 px-4 rounded-md text-xs">
+        <span className="top-0 right-0 shadow-md inline-flex justify-center gap-1 items-center absolute bg-gray-900 py-2 px-4 rounded-md text-xs">
           <svg
             width="12px"
             height="12px"

@@ -39,3 +39,28 @@ input:-webkit-autofill:focus {
     background-color 600000s 0s,
     color 600000s 0s;
 }
+
+.mySwiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-wrapper {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
+.swiper-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.swiper-scrollbar-horizontal {
+  height: 0px !important;
+}
+
+.swiper-slide {
+  @apply h-[290px];
+}
+
+.swiper-slide img {
+}
