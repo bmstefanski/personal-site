@@ -1,8 +1,10 @@
+'use client'
+
 import { formatDate } from 'pliny/utils/formatDate'
 import Image from './Image'
 import Link from './Link'
 
-const ArticleCard = async ({ title, imgSrc, href, date, locale }) => {
+const ArticleCard = ({ title, imgSrc, href, date, locale }) => {
   return (
     <div className="relative md min-w-[300px] max-w-[384px] p-2 w-full group">
       <div
