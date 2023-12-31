@@ -1,0 +1,72 @@
+---
+title: 💾 How to get downloadable URLs for all files in a Google Drive directory
+summary: This blog post guides readers through a simple yet effective method to generate downloadable URLs for files in Google Drive, utilizing Google Sheets and a custom script
+date: '2023-12-31'
+tags: ['DevOps']
+draft: false
+---
+
+I recently uploaded numerous files to Google Drive and organized them into a directory. My goal was to obtain downloadable URLs for each file. However, I discovered that Google Drive doesn't offer this feature directly.
+
+After some research, I stumbled upon an excellent article by Kurian George Cheripurathu - [Retrieve File Names and URLs of a Google Drive Folder using Google Apps Script and Google Sheets. Method to send personalised email attachment in bulk emails](https://medium.com/@akmkurian/retrieve-file-names-and-urls-of-a-google-drive-folder-using-google-apps-script-and-google-sheets-467955e88e7). This guide helped me immensely, solving about 90% of my problem.
+
+The only issue was that the generated URLs led to a `View the file` modal, rather than to direct download.
+
+I found a solution and will simplify the process here, incorporating some personal insights:
+
+1. Navigate to Google Sheets at [Google Sheets](https://docs.google.com/spreadsheets/). You might wonder why we need Sheets. It's because it's a straightforward way to display all URLs without dealing with authorization complexities you would while integrating with Google SDKs.
+2. Create a new Sheet document.
+3. In the top menu bar, find the `Extensions` tab (second from the right), hover over it, and click on `App Scripts`.
+4. This action opens the code editor. Here, paste the following JavaScript code:
+
+```js
+function onOpen() {
+  var ui = SpreadsheetApp.getUi()
+  ui.createMenu('Get Folder Details').addItem('Retrieve Files', 'retrieveFiles').addToUi()
+}
+
+function retrieveFiles() {
+  var folderLink = SpreadsheetApp.getUi().prompt('Enter the folder link').getResponseText()
+  var folder = DriveApp.getFolderById(getFolderIdFromLink(folderLink))
+  var files = folder.getFiles()
+  var data = []
+
+  while (files.hasNext()) {
+    var file = files.next()
+    var fileUrl = 'https://drive.google.com/open?id=' + file.getId()
+    data.push([
+      file.getName(),
+      fileUrl.replace('drive.google.com/open?id=', 'drive.google.com/uc?export=download&id='),
+    ])
+  }
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
+  sheet.getRange(1, 1, data.length, data[0].length).setValues(data)
+
+  SpreadsheetApp.getUi().alert('Files retrieved successfully.')
+}
+
+function getFolderIdFromLink(link) {
+  var regex = /\/folders\/([^/?]+)/
+  var match = link.match(regex)
+
+  if (match && match[1]) {
+    return match[1]
+  }
+
+  return null
+}
+```
+
+This code functions similarly to the original, but with a crucial difference: it replaces `drive.google.com/open` with `drive.google.com/uc?export=download`, creating URLs that automatically download or display your files.
+
+5. Save your changes using the diskette 💾 icon. **There's no need to deploy or run it—simply save and return to your Sheet.**
+6. Refresh the Sheet. It may take a few attempts before the "Get Folder Details" menu item appears.
+7. Once visible, click on it. The app will request permission access—grant it.
+8. You'll encounter a warning about the app being unpublished and potentially insecure. **This is standard for private, local applications and can be safely bypassed by clicking `Advanced` and proceeding.**
+9. A popup will ask for the directory link. Copy this from your Google Drive's URL bar and paste it into the prompt.
+10. In a moment, the script will list all file URLs from the directory.
+
+<br />
+
+**Tip:** If your Google Drive and Sheets accounts differ, ensure the folder is shared with the account used for Sheets.
