@@ -1,0 +1,71 @@
+---
+title: ❤️‍🔥 Accessing FireStore from client-side app
+summary:
+date: '2024-01-15'
+tags: ['Cloud']
+draft: false
+---
+
+Working with Google's services such as Firebase, Google Analytics, or Google Cloud Platform can often be a source of frustration for me. The primary issue is their documentation, which tends to be unclear or difficult to comprehend.
+Additionally, the frequent, sometimes annual, changes to their APIs can be a major headache, as it complicates the maintenance of any projects built on these platforms. But... sometimes you gotta do what you gotta do.
+
+I recently needed to integrate user profiles with the Firebase authentication module directly in a client-sided application (Next.js).
+
+The idea of connecting to a database from the client side might seem risky, but Firebase's **security rules** help mitigate this. **They allow safe enough interactions where an attacker is only able to modify their own data**, which is a useful safeguard.
+
+```hcl
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Make sure the uid of the requesting user matches name of the user
+    // document. The wildcard expression {userId} makes the userId variable
+    // available in rules.
+    match /users/{userId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
+    }
+  }
+}
+```
+
+To set up a client app with Firebase, you start by creating instances for each service as follows:
+
+```tsx
+// firebase/clientApp.ts
+
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
+
+const clientCredentials = {
+  apiKey: 'your api key',
+  authDomain: '<your app>.firebaseapp.com',
+  projectId: 'project id',
+}
+
+export const firebaseApp = initializeApp(clientCredentials)
+export const firebaseStore = getFirestore(firebaseApp)
+export const firebaseAuth = getAuth(firebaseApp)
+```
+
+For executing operations using the database, here's an example code snippet for inspiration:
+
+```tsx
+import { firebaseStore } from 'somewhere in your files'
+import { doc, getDoc, setDoc, addDoc } from 'firebase/firestore'
+
+// Reading
+
+const { uid } = user
+const docRef = await getDoc(doc(firebaseStore, 'users', uid))
+const userProfile = await docRef.data()
+
+// Writing (upsert)
+
+await setDoc(doc(db, 'users', uid), payload)
+
+// Writing (create)
+
+await addDoc(doc(db, 'users'), payload)
+```
+
+Official FireStore API reference can be found here: [https://firebase.google.com/docs/reference/js/firestore](https://firebase.google.com/docs/reference/js/firestore_#getdocs)
