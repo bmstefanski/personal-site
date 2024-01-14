@@ -1,0 +1,37 @@
+---
+title: 👨‍💻 What makes you a great software developer
+summary: Dive into a practical perspective on software engineering, challenging the overuse of complex techniques in simple projects and advocating for a product-focused approach.
+date: '2024-01-14'
+tags: ['Developer Experience', 'Clean Code', 'Career']
+draft: false
+---
+
+I've been thinking about bothers me about software engineers. Here's what I've got:
+
+One big issue for me is how a lot of **software engineers are more into just coding rather than thinking about the whole product**.
+They often just follow stuff they've read in books or heard from experts, without considering if it's right for their own work.
+
+This thing called "cargo cult programming" is something I hear about a lot. It's where junior devs fix things but don't really get how, or they copy solutions from online without understanding them.
+But it's not just the newbies; even the experienced folks do this, but in more complex ways, in macro scale.
+
+Here's what I often see:
+
+1. **Overdoing the Code**: Developers spend too much time perfecting code for things like a one-time migration script. They think they might need it again, but usually, they don't. It's okay to be proud of your work, but spending days on something you'll hardly use again doesn't make sense.
+
+2. **Focusing Too Much on Performance**: Like making a script run a minute faster when it's only used daily. That minute saved doesn't really make a big difference. It is already cheap, it runs only once a day.
+
+3. **Researching More Than Needed**: Engineers like to explore, which is cool. But if you have a deadline (you always do), you don't need to go all out exploring or trying new things. Better to stick with what you know unless it's been problematic before.
+
+4. **Testing Everything to the Max**: This is a big one for me. Building a small app doesn't mean you have to test it in every way possible. A few E2E tests will do just fine. Spending weeks on detailed tests for each part is too much (of course, it depends on a case). Your business won't go bankrupt because you spend a 1.5 minute longer waiting for E2E tests to finish. It also won't go bankrupt because you didn't write unit tests that tell you what exact function is causing the system to fail. You find that function pretty fast with E2E too.
+
+5. **Using Fancy Techniques for Simple Stuff**: A lot of methods from books or gurus are meant for corporate projects. But they often get used for smaller things where they don't fit. Some examples:
+   - **Test-Driven Development (TDD)**: It's great but can be a pain with complex code. It works in books where you start a project from scratch, but real life is often about dealing with layers of dependencies that are not architected the way you want and you end up fighting with them instead of shipping features.
+   - **Copying Complex Architectures**: Stuff like CQRS, DDD, microservices, or serverless sounds perfect in theory, but you probably don't need them for a small app or even medium-sized app. For instance, serverless might give you scalability, but then you end up with long cold starts which make the app unusable. Microservices might promise neat separation but can lead to mismatched dependencies, increased complexity in setup, and lots of repeated code.
+   - **Overusing Cloud Services**: If your app is small, you might not need all the cloud features. A simpler setup might handle everything just fine, even with a good number of users. You don't need Lambda and you don't need expensive scalable hosting for a CRUD app.
+
+So, these methods and ideas are great in the right places. But we as developers should focus on what our project really needs.
+If a famous technique or rule doesn't fit because your project is small or your team works a different way, it's good to say so.
+Doing this can help keep your project on the right track and avoid unnecessary complications.
+
+Like a coworker of mine once said, "It's all about trade-offs in IT".
+I really think knowing which tech or method to pick for different projects and teams is what makes you a better engineer, manager, or even a startup founder. Sadly, we still see plenty of senior engineers and architects just blindly following strategies they've read about, and by doing that, they end up letting down both the team and the product.
