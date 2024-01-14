@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import GitHubCalendar from 'react-github-calendar'
 
-const contributionYears = [2023, 2022, 2021, 2020, 2019, 2018, 2017]
+const contributionYears = [2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017]
 
 export default function GithubGraphSection() {
-  const [year, setYear] = useState(2023)
+  const [year, setYear] = useState(2024)
 
   return (
     <div className="w-full">
